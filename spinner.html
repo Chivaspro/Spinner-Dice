@@ -30,9 +30,10 @@
         blue 120deg 240deg,  /* Blue */
         red 240deg 360deg    /* Red */
       );
-      transition: transform 2s ease-out;
+      transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67); /* fast then slow */
     }
 
+    /* Arrow fixed pointing downward */
     .arrow {
       position: absolute;
       top: 50%;
@@ -41,8 +42,8 @@
       height: 0;
       border-left: 25px solid transparent;
       border-right: 25px solid transparent;
-      border-bottom: 40px solid red;
-      transform: translate(-50%, -200px);
+      border-top: 40px solid white; /* white arrow */
+      transform: translate(-50%, 180px);
     }
 
     /* Mobile buttons */
@@ -73,21 +74,25 @@
 
   <!-- Mobile Controls -->
   <div id="controls">
-    <button onclick="spinTo(0)">Red</button>
-    <button onclick="spinTo(120)">Blue</button>
-    <button onclick="spinTo(240)">Yellow</button>
+    <button onclick="spinTo(60)">Red</button>
+    <button onclick="spinTo(180)">Blue</button>
+    <button onclick="spinTo(300)">Yellow</button>
   </div>
 
   <script>
     const wheel = document.getElementById("wheel");
     let currentRotation = 0;
 
-    function spinTo(angle) {
-      currentRotation = angle;
-      wheel.style.transform = `rotate(${angle}deg)`;
+    function spinTo(targetAngle) {
+      // Add random full spins (720–1440 deg) for realism
+      const extraSpins = 720 + Math.floor(Math.random() * 720);
+      currentRotation += extraSpins + (targetAngle - (currentRotation % 360));
+
+      wheel.style.transition = "transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67)";
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
     }
 
-    // Only run on websites
+    // Only run on websites (http/https)
     if (location.protocol !== "http:" && location.protocol !== "https:") {
       document.body.innerHTML = "<h2 style='color:white;text-align:center;'>⚠️ This only runs on a website (http/https)</h2>";
       throw new Error("Not running on a website");
@@ -96,9 +101,9 @@
     // PC: keyboard controls
     document.addEventListener("keydown", (e) => {
       switch (e.key.toLowerCase()) {
-        case "r": spinTo(0); break;
-        case "b": spinTo(120); break;
-        case "y": spinTo(240); break;
+        case "r": spinTo(60); break;   // Red
+        case "b": spinTo(180); break;  // Blue
+        case "y": spinTo(300); break;  // Yellow
       }
     });
 
